@@ -1,0 +1,16 @@
+recomendacion: usar la ecuacion parametrica de la recta (la msma de Hough) -- x*cos(thetha)+y*sen(thetha) = rho
+entrenamiento:
+1º Generar M rectas aleatoriamente --> habrá que ajustar M
+2º Nos quedamos con la recta que mejor clasifique
+	Error = suma de pesos de los ejemplos mal clasificados
+
+alfa_T se calcula en función del error, a partir de ahí rellenamos el vector D
+
+Habría que pintar en pantalla las rectas que nos han salido.
+Consejo - pintar dos líneas pegadas, una de cada color, para comprobar si está clasificando bien. Una vez tienes el clasificador, pintar el fondo del canvas del color que toque
+
+Podemos implementar la validación
+
+Cargar los puntos de un fichero - generar ficheros de puntos
+
+Al generar aleatoriamente, viene bien restringirlo -> generar aleatoriamente la orientación y generar un punto aleatorio, haciendo que la recta pase por ese punto (con la fórmula paramétrica).
