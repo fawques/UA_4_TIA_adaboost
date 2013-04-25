@@ -71,7 +71,7 @@ public class Gui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 FileDialog fd = new FileDialog(framethis, "Load", FileDialog.LOAD);
                 fd.setVisible(true);
-                String filename=fd.getFile();
+                String filename=fd.getDirectory() + fd.getFile();
                 listaPuntos.clear();
 				
 				try {
