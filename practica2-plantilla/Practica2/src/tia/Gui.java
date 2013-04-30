@@ -36,8 +36,8 @@ public class Gui extends JFrame {
 	private static final long serialVersionUID = 737365829727001543L;
 
 	private List<Punto> listaPuntos;
-	private List<Linea> clasificadoresDebiles;
 	private Canvas areaPuntos;
+	private Adaboost adaboost;
 	
 	public Gui() {
 		super("AdaBoost");
@@ -62,11 +62,6 @@ public class Gui extends JFrame {
 		Random rand = new Random();
 		Date now = new Date();
 		rand.setSeed(359534);
-		clasificadoresDebiles = new ArrayList<>();
-		clasificadoresDebiles.add(new Linea(100.0, rand.nextDouble()*2*Math.PI));
-		clasificadoresDebiles.add(new Linea(100.0, rand.nextDouble()*2*Math.PI));
-		clasificadoresDebiles.add(new Linea(100.0, rand.nextDouble()*2*Math.PI));
-		clasificadoresDebiles.add(new Linea(100.0, rand.nextDouble()*2*Math.PI));
 
 		// Area de botones
 		JPanel areaBotones = new JPanel();
@@ -190,31 +185,6 @@ public class Gui extends JFrame {
 					g.setColor(Color.RED);
 				}				
 				g.drawOval((int)p.getX()-RADIO_PUNTO, (int)p.getY()-RADIO_PUNTO, RADIO_PUNTO*2+1, RADIO_PUNTO*2+1);				
-			}
-			
-			for(Linea l: clasificadoresDebiles){
-				// Calculamos los puntos extremo de la recta, de forma que vaya de lado a lado del canvas
-				Point puntoInicial;
-				int x = 0;
-				// para el cálculo usamos la forma paramétrica en coordenadas polares
-				int y = (int) Math.round((l.getRho()/Math.sin(l.getThetha())));
-				if(y < 0 || y > areaPuntos.getHeight()){
-					y = 0;
-					x = (int) Math.round((l.getRho()/Math.cos(l.getThetha())));
-				}
-				puntoInicial = new Point(x, y);
-				
-				Point puntoFinal;
-				x = areaPuntos.getWidth();
-				y = (int) Math.round(((l.getRho() - x * Math.cos(l.getThetha()))/Math.sin(l.getThetha())));
-				if(y < 0 || y > areaPuntos.getHeight()){
-					y = areaPuntos.getHeight();
-					x = (int) Math.round(((l.getRho() - y * Math.sin(l.getThetha()))/Math.cos(l.getThetha())));
-				}
-				puntoFinal = new Point(x, y);
-				g.setColor(Color.GREEN);//TODO: poner cada línea del color que toque
-				g.drawLine(puntoInicial.x, puntoInicial.y, puntoFinal.x, puntoFinal.y);
-				//g.drawLine(puntoInicial.x, puntoInicial.y-2, puntoFinal.x, puntoFinal.y-2);
 			}
 			
 		}
