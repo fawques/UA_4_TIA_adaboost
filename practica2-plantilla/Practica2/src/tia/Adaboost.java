@@ -22,8 +22,9 @@ public class Adaboost {
 	
 	private int anchoCanvas;
 	private int altoCanvas;
+	private Gui interfaz;
 	
-	public Adaboost(List<Punto> _puntos, int _maxIter, int _maxLineas, int _ancho, int _alto){
+	public Adaboost(Gui _interfaz, List<Punto> _puntos, int _maxIter, int _maxLineas, int _ancho, int _alto){;
 		puntos = _puntos;
 		inicializarPesos();
 		maxIteraciones = _maxIter;
@@ -34,6 +35,7 @@ public class Adaboost {
 		
 		anchoCanvas = _ancho;
 		altoCanvas = _alto;
+		interfaz = _interfaz;
 	}
 	
 	public void aplicarAdaboost() { // TODO: void por ahora

@@ -39,9 +39,11 @@ public class Gui extends JFrame {
 	private Canvas areaPuntos;
 	private Adaboost adaboost;
 	
+	private Gui interfaz;
+	
 	public Gui() {
 		super("AdaBoost");
-		
+		interfaz = this;
 		listaPuntos = new ArrayList<Punto>();		
 		
 		this.setLayout(new BorderLayout());
@@ -145,7 +147,8 @@ public class Gui extends JFrame {
 		JButton botonComenzar = new JButton("Comenzar");
 		botonComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO Ejecutar AdaBoost y mostrar resultados obtenidos
+				adaboost = new Adaboost(interfaz, listaPuntos, 100, 100, ANCHO, ALTO);
+				adaboost.aplicarAdaboost(); // TODO: hacer algo aquí.
 			}
 		});
 		areaBotones.add(botonComenzar);
