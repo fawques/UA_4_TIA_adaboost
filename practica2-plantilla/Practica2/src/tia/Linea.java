@@ -27,16 +27,20 @@ public class Linea {
 		int x = 0;
 		// para el cálculo usamos la forma paramétrica en coordenadas polares
 		int y = (int) Math.round((rho/Math.sin(thetha)));
-		if(y < 0 || y > alto){
+		if(y < 0 || y >= alto){
 			y = 0;
 			x = (int) Math.round((rho/Math.cos(thetha)));
+			if(x < 0 || x >= ancho){
+				y = alto -1;
+				x = (int) Math.round((rho/Math.cos(thetha)));
+			}
 		}
 		origen = new Point(x, y);
 		
-		x = ancho;
+		x = ancho-1;
 		y = (int) Math.round((rho - x * Math.cos(thetha))/Math.sin(thetha));
-		if(y < 0 || y > alto){
-			y = alto;
+		if(y < 0 || y >= alto){
+			y = alto-1;
 			x = (int) Math.round(((rho - y * Math.sin(thetha))/Math.cos(thetha)));
 		}
 		destino = new Point(x, y);
