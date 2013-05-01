@@ -43,6 +43,8 @@ public class Adaboost {
 		for(int i = 0; i < maxIteraciones; i++ ){
 			List<clasificadorDebil> posiblesClasificadores = generarLineas();
 			for (clasificadorDebil clasificador : posiblesClasificadores) {
+				interfaz.listaLineas.add(clasificador.getLinea());
+				interfaz.refrescarCanvas();
 				
 			}
 		}
@@ -54,7 +56,7 @@ public class Adaboost {
 		Random rand = new Random(now.getTime());
 		for(int i = 0; i < maxLineas; i++){
 			Point punto = new Point(rand.nextInt(anchoCanvas),rand.nextInt(altoCanvas));
-			double thetha = rand.nextDouble();
+			double thetha = rand.nextDouble()* 2 * Math.PI;
 			// rho = x*cos(th) + y*sin(th)
 			double rho = punto.getX() * Math.cos(thetha) + punto.getY() * Math.sin(thetha);
 			lineas.add(new clasificadorDebil(new Linea(rho,thetha,anchoCanvas,altoCanvas)));
@@ -70,7 +72,7 @@ public class Adaboost {
 		pesos = new ArrayList<>(N);
 		int pesoInicial = 1/N;
 		for (int i = 0; i < N; i++) {
-			pesos.set(i, pesoInicial);
+			pesos.add( pesoInicial);
 		}
 	}
 	

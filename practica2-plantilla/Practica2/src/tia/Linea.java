@@ -19,10 +19,7 @@ public class Linea {
 	private Point destino;
 	
 	public Linea(double _rho, double _thetha, int ancho, int alto){
-		if(_rho > 0)
-			rho = _rho;
-		else
-			rho = 0;
+		rho = _rho;
 		
 		thetha = _thetha;
 		
