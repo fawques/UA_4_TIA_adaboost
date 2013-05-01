@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class Adaboost {
 	private List<Punto> puntos;
-	private List<Integer> pesos;
+	private List<Double> pesos;
 	private List<Linea> clasificadoresDebiles;
 	private List<Linea> clasificadorFuerte;
 
@@ -95,7 +95,7 @@ public class Adaboost {
 	private void inicializarPesos() {
 		int N = puntos.size();
 		pesos = new ArrayList<>(N);
-		int pesoInicial = 1 / N;
+		double pesoInicial = 1.0 / N;
 		for (int i = 0; i < N; i++) {
 			pesos.add(pesoInicial);
 		}
