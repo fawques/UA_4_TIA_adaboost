@@ -39,6 +39,7 @@ public class Gui extends JFrame {
 
 	private List<Punto> listaPuntos;
 	public List<Linea> listaLineas;
+	public List<Linea> listaClasif;
 	private Canvas areaPuntos;
 	private Adaboost adaboost;
 
@@ -49,6 +50,7 @@ public class Gui extends JFrame {
 		interfaz = this;
 		listaPuntos = new ArrayList<Punto>();
 		listaLineas = new ArrayList<Linea>();
+		listaClasif = new ArrayList<Linea>();
 		adaboost = null;
 
 		this.setLayout(new BorderLayout());
@@ -159,6 +161,7 @@ public class Gui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (listaPuntos.size() > 0 && adaboost == null) {
 					listaLineas.clear();
+					listaClasif.clear();
 					adaboost = new Adaboost(interfaz, listaPuntos,MAXITERACIONES, MAXLINEAS, ANCHO, ALTO);
 					adaboost.aplicarAdaboost(); // TODO: hacer algo aquí.
 					adaboost = null;
@@ -173,6 +176,7 @@ public class Gui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				listaPuntos.clear();
 				listaLineas.clear();
+				listaClasif.clear();
 				areaPuntos.repaint();
 			}
 		});
@@ -212,6 +216,13 @@ public class Gui extends JFrame {
 
 			g.setColor(Color.GREEN);
 			for (Linea linea : listaLineas) {
+				g.drawLine((int) linea.getOrigen().getX(), (int) linea
+						.getOrigen().getY(), (int) linea.getDestino().getX(),
+						(int) linea.getDestino().getY());
+			}
+			
+			g.setColor(Color.BLACK);
+			for (Linea linea : listaClasif) {
 				g.drawLine((int) linea.getOrigen().getX(), (int) linea
 						.getOrigen().getY(), (int) linea.getDestino().getX(),
 						(int) linea.getDestino().getY());
