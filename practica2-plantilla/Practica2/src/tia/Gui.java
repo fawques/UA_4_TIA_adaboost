@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 
 public class Gui extends JFrame {
 
-	private static final int MAXITERACIONES = 1;
+	private static final int MAXITERACIONES = 2;
 	private static final int MAXLINEAS = 30;
 	private final static int ANCHO = 400;
 	private final static int ALTO = 400;

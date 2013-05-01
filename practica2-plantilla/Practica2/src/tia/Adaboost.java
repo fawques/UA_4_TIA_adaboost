@@ -22,6 +22,8 @@ public class Adaboost {
 	private int anchoCanvas;
 	private int altoCanvas;
 	private Gui interfaz;
+	
+	private Random rand;
 
 	public Adaboost(Gui _interfaz, List<Punto> _puntos, int _maxIter,
 			int _maxLineas, int _ancho, int _alto) {
@@ -38,44 +40,74 @@ public class Adaboost {
 		anchoCanvas = _ancho;
 		altoCanvas = _alto;
 		interfaz = _interfaz;
+		Date now = new Date();
+		rand = new Random(now.getTime());
 	}
 
 	public void aplicarAdaboost() { // TODO: void por ahora
 		// empieza el bucle principal -- t = 1,...,T
 		for (int i = 0; i < maxIteraciones; i++) {
-			clasificadorDebil mejorClasificador = null;
-			List<clasificadorDebil> posiblesClasificadores = generarLineas();
-			for (clasificadorDebil clasificador : posiblesClasificadores) {
-				interfaz.listaLineas.add(clasificador.getLinea());
-				interfaz.refrescarCanvas();
-
-				double thetha = clasificador.getLinea().getThetha();
-				double rho = clasificador.getLinea().getRho();
-
-				double epsilon = 0;
-
-				for (int j = 0; j < puntos.size(); j++) {
-					Punto punto = puntos.get(j);
-					double dist = punto.getX() * Math.cos(thetha)
-							+ punto.getY() * Math.sin(thetha);
-					if (Math.signum(dist - rho) != punto.getTipo()) {
-						epsilon += pesos.get(j);
-					}
+			clasificadorDebil clasificador = obtenerClasificador();
+			
+			
+			
+			ArrayList<Double> pesosSinNormalizar = new ArrayList<Double>();
+			double normalizacion = 0;
+			
+			for (int j = 0; j < puntos.size(); j++) {
+				Punto punto = puntos.get(j);
+				double nuevoPeso;
+				if(clasificador.clasificar(punto)){
+					 nuevoPeso = pesos.get(j) * Math.pow(Math.E, -1 * clasificador.getAlpha());
+				}else{
+					nuevoPeso = pesos.get(j) * Math.pow(Math.E, clasificador.getAlpha());
 				}
-				clasificador.setEpsilon(epsilon);
-				if(mejorClasificador == null || epsilon < mejorClasificador.getEpsilon())
-					mejorClasificador = clasificador;
+				pesosSinNormalizar.add(nuevoPeso);
+				normalizacion += nuevoPeso;
 			}
-			interfaz.listaClasif.add(mejorClasificador.getLinea());
-			interfaz.refrescarCanvas();
+			
+			for (int j = 0; j < pesos.size(); j++) {
+				pesos.set(j, pesosSinNormalizar.get(j)/normalizacion);
+			}
+			
+			System.out.println("He terminado una iteración");
+			System.out.println("El factor de confianza es alpha = " + clasificador.getAlpha());
+			System.out.println("Y su epsilon = " + clasificador.getEpsilon());
+			
 			
 		}
 	}
 
+	/**
+	 * @param mejorClasificador
+	 * @return
+	 */
+	private clasificadorDebil obtenerClasificador() {
+		clasificadorDebil mejorClasificador = null;
+		List<clasificadorDebil> posiblesClasificadores = generarLineas();
+		for (clasificadorDebil clasificador : posiblesClasificadores) {
+			interfaz.listaLineas.add(clasificador.getLinea());
+			interfaz.refrescarCanvas();
+
+			clasificador.clasificar(puntos, pesos);
+			
+			if(mejorClasificador == null || clasificador.getEpsilon() < mejorClasificador.getEpsilon())
+				mejorClasificador = clasificador;
+		}
+		double alpha = 0.5 * Math.log((1-mejorClasificador.getEpsilon()) /mejorClasificador.getEpsilon());
+		if(alpha > 1)
+			alpha = 1;
+			
+		mejorClasificador.setAlpha(alpha);
+		interfaz.listaClasif.add(mejorClasificador.getLinea());
+		interfaz.refrescarCanvas();
+		return mejorClasificador;
+	}
+
 	public List<clasificadorDebil> generarLineas() {
 		ArrayList<clasificadorDebil> lineas = new ArrayList<>();
-		Date now = new Date();
-		Random rand = new Random(now.getTime());
+		
+		
 		for (int i = 0; i < maxLineas; i++) {
 			Point punto = new Point(rand.nextInt(anchoCanvas),
 					rand.nextInt(altoCanvas));
