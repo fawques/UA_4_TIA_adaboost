@@ -58,8 +58,8 @@ public class Adaboost {
 			}
 			
 			clasFinal.add(clasificador);
-			interfaz.clasificadorFinal = clasFinal;
 			clasFinal.clasificar(puntos, pesos);
+			interfaz.clasificadorFinal = clasFinal;
 			
 			if(clasFinal.getEpsilon() == 0.0){
 				System.out.println("Encontrado el clasificador final perfecto");
@@ -88,6 +88,7 @@ public class Adaboost {
 			System.out.println("He terminado una iteración");
 			System.out.println("El factor de confianza es alpha = " + clasificador.getAlpha());
 			System.out.println("Y su epsilon = " + clasificador.getEpsilon());
+			System.out.println("El epsilon actual del clasificador fuerte es " + clasFinal.getEpsilon());
 			
 			
 		}
