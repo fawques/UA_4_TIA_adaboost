@@ -102,7 +102,7 @@ public class Adaboost {
 		List<clasificadorDebil> posiblesClasificadores = generarLineas();
 		for (clasificadorDebil clasificador : posiblesClasificadores) {
 			interfaz.listaLineas.add(clasificador.getLinea());
-			interfaz.repintarCanvas();
+			//interfaz.repintarCanvas();
 
 			clasificador.clasificar(puntos, pesos);
 			
@@ -113,7 +113,7 @@ public class Adaboost {
 		
 		mejorClasificador.setAlpha(alpha);
 		interfaz.listaDebiles.add(mejorClasificador.getLinea());
-		interfaz.repintarCanvas();
+		//interfaz.repintarCanvas();
 		return mejorClasificador;
 	}
 

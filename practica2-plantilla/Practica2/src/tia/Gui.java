@@ -238,8 +238,8 @@ public class Gui extends JFrame {
 			if(cb_fondo.getState()){
 				Color fondoRojo = new Color(255,100,100,200);
 				Color fondoAzul = new Color(100,100,255,200);
-				for(int i = 0; i < this.getHeight();i++){
-					for(int j = 0; j < this.getWidth();j++){
+				for(int i = 0; i < this.getWidth();i++){
+					for(int j = 0; j < this.getHeight();j++){
 						double clase = clasificadorFinal.clasificar(new Punto(i, j, 0));
 						if(clase > 0){
 							g.setColor(fondoAzul);
@@ -248,7 +248,7 @@ public class Gui extends JFrame {
 							g.setColor(fondoRojo);
 						}
 						
-						g.drawLine(j, i, j, i);
+						g.drawLine(i, j, i, j);
 							
 					}
 				}
