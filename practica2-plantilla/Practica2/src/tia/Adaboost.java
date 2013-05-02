@@ -15,8 +15,8 @@ import sun.awt.SunToolkit.InfiniteLoop;
 public class Adaboost {
 	private List<Punto> puntos;
 	private List<Double> pesos;
-	private List<Linea> clasificadoresDebiles;
-	private List<Linea> clasificadorFuerte;
+	//private List<Linea> clasificadoresDebiles;
+	private clasificadorFuerte clasFinal;
 
 	private int maxIteraciones;
 	private int maxLineas;
@@ -35,8 +35,8 @@ public class Adaboost {
 		maxIteraciones = _maxIter;
 		maxLineas = _maxLineas;
 
-		clasificadoresDebiles = new ArrayList<Linea>();
-		// clasificadorFuerte = new ArrayList<Linea>(); //TODO: crear cuando
+		//clasificadoresDebiles = new ArrayList<Linea>();
+		clasFinal = new clasificadorFuerte(); //TODO: crear cuando
 		// esté seguro de que es así
 
 		anchoCanvas = _ancho;
@@ -53,7 +53,16 @@ public class Adaboost {
 			
 			if(((Double)clasificador.getAlpha()).isInfinite())
 			{
-				System.out.println("Alpha infinito :)");
+				System.out.println("Alpha infinito, desechamos los demás y nos quedamos con este");
+				clasFinal.clear();
+			}
+			
+			clasFinal.add(clasificador);
+			interfaz.clasificadorFinal = clasFinal;
+			clasFinal.clasificar(puntos, pesos);
+			
+			if(clasFinal.getEpsilon() == 0.0){
+				System.out.println("Encontrado el clasificador final perfecto");
 				break;
 			}
 			
@@ -93,7 +102,7 @@ public class Adaboost {
 		List<clasificadorDebil> posiblesClasificadores = generarLineas();
 		for (clasificadorDebil clasificador : posiblesClasificadores) {
 			interfaz.listaLineas.add(clasificador.getLinea());
-			interfaz.refrescarCanvas();
+			interfaz.repintarCanvas();
 
 			clasificador.clasificar(puntos, pesos);
 			
@@ -103,8 +112,8 @@ public class Adaboost {
 		double alpha = 0.5 * Math.log((1-mejorClasificador.getEpsilon()) /mejorClasificador.getEpsilon());
 		
 		mejorClasificador.setAlpha(alpha);
-		interfaz.listaClasif.add(mejorClasificador.getLinea());
-		interfaz.refrescarCanvas();
+		interfaz.listaDebiles.add(mejorClasificador.getLinea());
+		interfaz.repintarCanvas();
 		return mejorClasificador;
 	}
 

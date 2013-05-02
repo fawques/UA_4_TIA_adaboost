@@ -7,8 +7,6 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -30,8 +28,8 @@ import javax.swing.JPanel;
 
 public class Gui extends JFrame {
 
-	private static final int MAXITERACIONES = 10;
-	private static final int MAXLINEAS = 3000;
+	private static final int MAXITERACIONES = 10000;
+	private static final int MAXLINEAS = 30000;
 	private static int ANCHO = 400;
 	private static int ALTO = 400;
 
@@ -41,10 +39,16 @@ public class Gui extends JFrame {
 
 	private List<Punto> listaPuntos;
 	public List<Linea> listaLineas;
-	public List<Linea> listaClasif;
+	public List<Linea> listaDebiles;
+	// public List<clasificadorDebil> listaFinal;
+	public clasificadorFuerte clasificadorFinal;
 	private Canvas areaPuntos;
 	private Adaboost adaboost;
+
 	private Checkbox cb_intermedias;
+	private Checkbox cb_debiles;
+	private Checkbox cb_fondo;
+	private JButton bt_repintar;
 
 	private Gui interfaz;
 
@@ -53,17 +57,32 @@ public class Gui extends JFrame {
 		interfaz = this;
 		listaPuntos = new ArrayList<Punto>();
 		listaLineas = new ArrayList<Linea>();
-		listaClasif = new ArrayList<Linea>();
+		listaDebiles = new ArrayList<Linea>();
+		// listaFinal = new ArrayList<clasificadorDebil>();
+		clasificadorFinal = new clasificadorFuerte();
 		adaboost = null;
 
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		// Area de inputs
 		JPanel barraSuperior = new JPanel();
 		barraSuperior.setLayout(new FlowLayout());
 		cb_intermedias = new Checkbox("Líneas intermedias");
 		barraSuperior.add(cb_intermedias);
+		cb_debiles = new Checkbox("Mostrar clasificadores débiles");
+		barraSuperior.add(cb_debiles);
+		cb_fondo = new Checkbox("Pintar fondo");
+		barraSuperior.add(cb_fondo);
+		bt_repintar = new JButton(new AbstractAction("Repintar") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				repintarCanvas();
+
+			}
+		});
+		barraSuperior.add(bt_repintar);
 		this.add(barraSuperior, BorderLayout.NORTH);
 
 		// Area de dibujo
@@ -171,8 +190,10 @@ public class Gui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (listaPuntos.size() > 0 && adaboost == null) {
 					listaLineas.clear();
-					listaClasif.clear();
-					adaboost = new Adaboost(interfaz, listaPuntos,MAXITERACIONES, MAXLINEAS, ANCHO, ALTO);
+					listaDebiles.clear();
+					clasificadorFinal.clear();
+					adaboost = new Adaboost(interfaz, listaPuntos,
+							MAXITERACIONES, MAXLINEAS, ANCHO, ALTO);
 					adaboost.aplicarAdaboost(); // TODO: hacer algo aquí.
 					adaboost = null;
 				}
@@ -186,19 +207,22 @@ public class Gui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				listaPuntos.clear();
 				listaLineas.clear();
-				listaClasif.clear();
+				listaDebiles.clear();
+				clasificadorFinal.clear();
 				areaPuntos.repaint();
 			}
 		});
 		areaBotones.add(botonLimpiar);
 		this.setMinimumSize(new Dimension(400, 400));
-		ANCHO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
-		ALTO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
+		ANCHO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getMaximumWindowBounds().width;
+		ALTO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getMaximumWindowBounds().height;
 		this.setSize(ANCHO, ALTO);
 		this.setExtendedState(MAXIMIZED_BOTH);
 	}
 
-	public void refrescarCanvas() {
+	public void repintarCanvas() {
 		areaPuntos.repaint();
 	}
 
@@ -216,37 +240,67 @@ public class Gui extends JFrame {
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-			
-
-			if(cb_intermedias.getState()){
-			g.setColor(Color.GREEN);
-			for (Linea linea : listaLineas) {
-				g.drawLine((int) linea.getOrigen().getX(), (int) linea
-						.getOrigen().getY(), (int) linea.getDestino().getX(),
-						(int) linea.getDestino().getY());
-			}}
+			if (cb_intermedias.getState()) {
+				g.setColor(Color.GREEN);
+				for (Linea linea : listaLineas) {
+					g.drawLine((int) linea.getOrigen().getX(), (int) linea
+							.getOrigen().getY(), (int) linea.getDestino()
+							.getX(), (int) linea.getDestino().getY());
+				}
+			}
 			// Dibuja los puntos
-						for (Punto p : listaPuntos) {
-							if (p.getTipo() > 0) {
-								g.setColor(Color.BLUE);
-							} else {
-								g.setColor(Color.RED);
-							}
-							g.drawOval((int) p.getX() - RADIO_PUNTO, (int) p.getY()
-									- RADIO_PUNTO, RADIO_PUNTO * 2 + 1, RADIO_PUNTO * 2 + 1);
-						}
-			
-			for (Linea linea : listaClasif) {
-				Linea lineaExtra = new Linea(linea.getRho()+2,linea.getThetha(),ANCHO,ALTO);
-				
-				g.setColor(Color.RED);
+			for (Punto p : listaPuntos) {
+				if (p.getTipo() > 0) {
+					g.setColor(Color.BLUE);
+				} else {
+					g.setColor(Color.RED);
+				}
+				g.drawOval((int) p.getX() - RADIO_PUNTO, (int) p.getY()
+						- RADIO_PUNTO, RADIO_PUNTO * 2 + 1, RADIO_PUNTO * 2 + 1);
+			}
+
+			if (cb_debiles.getState()) {
+				for (Linea linea : listaDebiles) {
+					Linea lineaAux = new Linea(linea.getRho() - 1,
+							linea.getThetha(), ANCHO, ALTO);
+					Linea lineaExtra = new Linea(linea.getRho() + 1,
+							linea.getThetha(), ANCHO, ALTO);
+
+					g.setColor(Color.RED);
+					g.drawLine((int) lineaAux.getOrigen().getX(),
+							(int) lineaAux.getOrigen().getY(), (int) lineaAux
+									.getDestino().getX(), (int) lineaAux
+									.getDestino().getY());
+					g.setColor(Color.BLUE);
+					g.drawLine((int) lineaExtra.getOrigen().getX(),
+							(int) lineaExtra.getOrigen().getY(),
+							(int) lineaExtra.getDestino().getX(),
+							(int) lineaExtra.getDestino().getY());
+				}
+			}
+
+			for (clasificadorDebil clasDebil : clasificadorFinal
+					.getClasificadores()) {
+				Linea linea = clasDebil.getLinea();
+				Linea lineaExtra = new Linea(linea.getRho() + 2,
+						linea.getThetha(), ANCHO, ALTO);
+				Linea lineaExtra2 = new Linea(linea.getRho() - 2,
+						linea.getThetha(), ANCHO, ALTO);
+
+				g.setColor(Color.BLACK);
 				g.drawLine((int) linea.getOrigen().getX(), (int) linea
 						.getOrigen().getY(), (int) linea.getDestino().getX(),
 						(int) linea.getDestino().getY());
+				g.setColor(Color.RED);
+				g.drawLine((int) lineaExtra2.getOrigen().getX(),
+						(int) lineaExtra2.getOrigen().getY(), (int) lineaExtra2
+								.getDestino().getX(), (int) lineaExtra2
+								.getDestino().getY());
 				g.setColor(Color.BLUE);
-				g.drawLine((int) lineaExtra.getOrigen().getX(), (int) lineaExtra
-						.getOrigen().getY(), (int) lineaExtra.getDestino().getX(),
-						(int) lineaExtra.getDestino().getY());
+				g.drawLine((int) lineaExtra.getOrigen().getX(),
+						(int) lineaExtra.getOrigen().getY(), (int) lineaExtra
+								.getDestino().getX(), (int) lineaExtra
+								.getDestino().getY());
 			}
 
 		}
