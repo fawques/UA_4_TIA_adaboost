@@ -23,6 +23,8 @@ public class Linea {
 		
 		thetha = _thetha;
 		
+		
+		
 		// Calculamos los puntos extremo de la recta, de forma que vaya de lado a lado del canvas
 		int x = 0;
 		// para el cálculo usamos la forma paramétrica en coordenadas polares
@@ -32,7 +34,7 @@ public class Linea {
 			x = (int) Math.round((rho/Math.cos(thetha)));
 			if(x < 0 || x >= ancho){
 				y = alto -1;
-				x = (int) Math.round((rho/Math.cos(thetha)));
+				x = (int) Math.round(((rho - y * Math.sin(thetha))/Math.cos(thetha)));
 			}
 		}
 		origen = new Point(x, y);
@@ -42,6 +44,10 @@ public class Linea {
 		if(y < 0 || y >= alto){
 			y = alto-1;
 			x = (int) Math.round(((rho - y * Math.sin(thetha))/Math.cos(thetha)));
+			if(x < 0 || x >= ancho){
+				y = 0;
+				x = (int) Math.round(((rho - y * Math.sin(thetha))/Math.cos(thetha)));
+			}
 		}
 		destino = new Point(x, y);
 		
