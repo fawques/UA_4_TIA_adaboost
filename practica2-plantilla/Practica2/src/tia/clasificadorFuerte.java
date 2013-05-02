@@ -53,7 +53,7 @@ public class clasificadorFuerte {
 			Punto punto = listaPuntos.get(i);
 
 			double valorFinal = clasificar(punto);
-			if (Math.signum(valorFinal) != punto.getTipo()) {
+			if (valorFinal != punto.getTipo()) {
 				epsilon += listaPesos.get(i);
 			}
 		}
@@ -76,6 +76,6 @@ public class clasificadorFuerte {
 					* Math.sin(thetha);
 			valorFinal += clasificador.getAlpha() * Math.signum(dist - rho);
 		}
-		return valorFinal;
+		return Math.signum(valorFinal);
 	}
 }
