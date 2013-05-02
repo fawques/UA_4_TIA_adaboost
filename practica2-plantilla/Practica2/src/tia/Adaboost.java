@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import sun.awt.SunToolkit.InfiniteLoop;
+
 /**
  * @author Víctor Ejecuta el algoritmo adaboost dada una serie de puntos, para
  *         clasificarlos en dos grupos.
@@ -49,7 +51,11 @@ public class Adaboost {
 		for (int i = 0; i < maxIteraciones; i++) {
 			clasificadorDebil clasificador = obtenerClasificador();
 			
-			
+			if(((Double)clasificador.getAlpha()).isInfinite())
+			{
+				System.out.println("Alpha infinito :)");
+				break;
+			}
 			
 			ArrayList<Double> pesosSinNormalizar = new ArrayList<Double>();
 			double normalizacion = 0;
@@ -95,9 +101,7 @@ public class Adaboost {
 				mejorClasificador = clasificador;
 		}
 		double alpha = 0.5 * Math.log((1-mejorClasificador.getEpsilon()) /mejorClasificador.getEpsilon());
-		if(alpha > 1)
-			alpha = 1;
-			
+		
 		mejorClasificador.setAlpha(alpha);
 		interfaz.listaClasif.add(mejorClasificador.getLinea());
 		interfaz.refrescarCanvas();
