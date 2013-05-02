@@ -1,6 +1,7 @@
 package tia;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -30,7 +31,7 @@ import javax.swing.JPanel;
 public class Gui extends JFrame {
 
 	private static final int MAXITERACIONES = 10;
-	private static final int MAXLINEAS = 30;
+	private static final int MAXLINEAS = 3000;
 	private static int ANCHO = 400;
 	private static int ALTO = 400;
 
@@ -43,6 +44,7 @@ public class Gui extends JFrame {
 	public List<Linea> listaClasif;
 	private Canvas areaPuntos;
 	private Adaboost adaboost;
+	private Checkbox cb_intermedias;
 
 	private Gui interfaz;
 
@@ -56,6 +58,13 @@ public class Gui extends JFrame {
 
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// Area de inputs
+		JPanel barraSuperior = new JPanel();
+		barraSuperior.setLayout(new FlowLayout());
+		cb_intermedias = new Checkbox("Líneas intermedias");
+		barraSuperior.add(cb_intermedias);
+		this.add(barraSuperior, BorderLayout.NORTH);
 
 		// Area de dibujo
 		areaPuntos = new Canvas();
@@ -207,24 +216,25 @@ public class Gui extends JFrame {
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-			// Dibuja los puntos
-			for (Punto p : listaPuntos) {
-				if (p.getTipo() > 0) {
-					g.setColor(Color.BLUE);
-				} else {
-					g.setColor(Color.RED);
-				}
-				g.drawOval((int) p.getX() - RADIO_PUNTO, (int) p.getY()
-						- RADIO_PUNTO, RADIO_PUNTO * 2 + 1, RADIO_PUNTO * 2 + 1);
-			}
+			
 
+			if(cb_intermedias.getState()){
 			g.setColor(Color.GREEN);
 			for (Linea linea : listaLineas) {
 				g.drawLine((int) linea.getOrigen().getX(), (int) linea
 						.getOrigen().getY(), (int) linea.getDestino().getX(),
 						(int) linea.getDestino().getY());
-			}
-			
+			}}
+			// Dibuja los puntos
+						for (Punto p : listaPuntos) {
+							if (p.getTipo() > 0) {
+								g.setColor(Color.BLUE);
+							} else {
+								g.setColor(Color.RED);
+							}
+							g.drawOval((int) p.getX() - RADIO_PUNTO, (int) p.getY()
+									- RADIO_PUNTO, RADIO_PUNTO * 2 + 1, RADIO_PUNTO * 2 + 1);
+						}
 			
 			for (Linea linea : listaClasif) {
 				Linea lineaExtra = new Linea(linea.getRho()+2,linea.getThetha(),ANCHO,ALTO);
