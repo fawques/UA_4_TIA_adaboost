@@ -17,9 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -96,9 +94,6 @@ public class Gui extends JFrame {
 
 		});
 		this.add(areaPuntos, BorderLayout.CENTER);
-		Random rand = new Random();
-		Date now = new Date();
-		rand.setSeed(359534);
 
 		// Area de botones
 		JPanel areaBotones = new JPanel();
@@ -240,6 +235,25 @@ public class Gui extends JFrame {
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+			if(cb_fondo.getState()){
+				Color fondoRojo = new Color(255,100,100,200);
+				Color fondoAzul = new Color(100,100,255,200);
+				for(int i = 0; i < this.getHeight();i++){
+					for(int j = 0; j < this.getWidth();j++){
+						double clase = clasificadorFinal.clasificar(new Punto(i, j, 0));
+						if(clase > 0){
+							g.setColor(fondoAzul);
+						}else{
+							
+							g.setColor(fondoRojo);
+						}
+						
+						g.drawLine(j, i, j, i);
+							
+					}
+				}
+			}
+			
 			if (cb_intermedias.getState()) {
 				g.setColor(Color.GREEN);
 				for (Linea linea : listaLineas) {
