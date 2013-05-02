@@ -7,6 +7,7 @@ import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -28,10 +29,10 @@ import javax.swing.JPanel;
 
 public class Gui extends JFrame {
 
-	private static final int MAXITERACIONES = 2;
+	private static final int MAXITERACIONES = 10;
 	private static final int MAXLINEAS = 30;
-	private final static int ANCHO = 400;
-	private final static int ALTO = 400;
+	private static int ANCHO = 400;
+	private static int ALTO = 400;
 
 	private final static int RADIO_PUNTO = 2;
 
@@ -181,8 +182,11 @@ public class Gui extends JFrame {
 			}
 		});
 		areaBotones.add(botonLimpiar);
-
-		this.setMinimumSize(new Dimension(ANCHO, ALTO));
+		this.setMinimumSize(new Dimension(400, 400));
+		ANCHO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
+		ALTO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
+		this.setSize(ANCHO, ALTO);
+		this.setExtendedState(MAXIMIZED_BOTH);
 	}
 
 	public void refrescarCanvas() {
@@ -221,11 +225,18 @@ public class Gui extends JFrame {
 						(int) linea.getDestino().getY());
 			}
 			
-			g.setColor(Color.BLACK);
+			
 			for (Linea linea : listaClasif) {
+				Linea lineaExtra = new Linea(linea.getRho()+2,linea.getThetha(),ANCHO,ALTO);
+				
+				g.setColor(Color.RED);
 				g.drawLine((int) linea.getOrigen().getX(), (int) linea
 						.getOrigen().getY(), (int) linea.getDestino().getX(),
 						(int) linea.getDestino().getY());
+				g.setColor(Color.BLUE);
+				g.drawLine((int) lineaExtra.getOrigen().getX(), (int) lineaExtra
+						.getOrigen().getY(), (int) lineaExtra.getDestino().getX(),
+						(int) lineaExtra.getDestino().getY());
 			}
 
 		}
