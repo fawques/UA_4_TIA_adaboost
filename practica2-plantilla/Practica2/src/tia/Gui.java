@@ -7,6 +7,9 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Label;
+import java.awt.TextArea;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,8 +29,8 @@ import javax.swing.JPanel;
 
 public class Gui extends JFrame {
 
-	private static final int MAXITERACIONES = 100;
-	private static final int MAXLINEAS = 30000;
+	private static int MAXITERACIONES = 100;
+	private static int MAXLINEAS = 30;
 	private static int ANCHO = 400;
 	private static int ALTO = 400;
 
@@ -48,6 +51,8 @@ public class Gui extends JFrame {
 	private Checkbox cb_fuerte;
 	private Checkbox cb_fondo;
 	private JButton bt_repintar;
+	private TextField tx_lineas;
+	private TextField tx_iter;
 
 	private Gui interfaz;
 
@@ -67,6 +72,12 @@ public class Gui extends JFrame {
 		// Area de inputs
 		JPanel barraSuperior = new JPanel();
 		barraSuperior.setLayout(new FlowLayout());
+		tx_iter = new TextField("100",4);
+		barraSuperior.add(new Label("Iteraciones"));
+		barraSuperior.add(tx_iter);
+		tx_lineas = new TextField("1000",4);
+		barraSuperior.add(new Label("Líneas"));
+		barraSuperior.add(tx_lineas);
 		cb_intermedias = new Checkbox("Líneas intermedias");
 		barraSuperior.add(cb_intermedias);
 		cb_debiles = new Checkbox("Mostrar clasificadores débiles");
@@ -188,6 +199,16 @@ public class Gui extends JFrame {
 		botonComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (listaPuntos.size() > 0 && adaboost == null) {
+					try{
+						MAXITERACIONES = Integer.parseInt(tx_iter.getText());
+					}catch(NumberFormatException exc){
+						MAXITERACIONES = 100;
+					}
+					try {
+						MAXLINEAS = Integer.parseInt(tx_lineas.getText());
+					} catch (NumberFormatException e1) {
+						MAXLINEAS = 1000;
+					}
 					listaLineas.clear();
 					listaDebiles.clear();
 					clasificadorFinal.clear();
