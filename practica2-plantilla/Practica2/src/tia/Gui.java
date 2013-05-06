@@ -3,17 +3,19 @@ package tia;
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Label;
-import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -53,6 +55,9 @@ public class Gui extends JFrame {
 	private JButton bt_repintar;
 	private TextField tx_lineas;
 	private TextField tx_iter;
+	private Dialog d_mensaje;
+
+	private BufferedImage fondoCanvas;
 
 	private Gui interfaz;
 
@@ -72,10 +77,10 @@ public class Gui extends JFrame {
 		// Area de inputs
 		JPanel barraSuperior = new JPanel();
 		barraSuperior.setLayout(new FlowLayout());
-		tx_iter = new TextField("100",4);
+		tx_iter = new TextField("100", 4);
 		barraSuperior.add(new Label("Iteraciones"));
 		barraSuperior.add(tx_iter);
-		tx_lineas = new TextField("1000",4);
+		tx_lineas = new TextField("1000", 4);
 		barraSuperior.add(new Label("Líneas"));
 		barraSuperior.add(tx_lineas);
 		cb_intermedias = new Checkbox("Líneas intermedias");
@@ -97,7 +102,7 @@ public class Gui extends JFrame {
 		});
 		barraSuperior.add(bt_repintar);
 		this.add(barraSuperior, BorderLayout.NORTH);
-
+		
 		// Area de dibujo
 		areaPuntos = new Canvas();
 		areaPuntos.addMouseListener(new MouseAdapter() {
@@ -109,6 +114,7 @@ public class Gui extends JFrame {
 
 		});
 		this.add(areaPuntos, BorderLayout.CENTER);
+		fondoCanvas = null;
 
 		// Area de botones
 		JPanel areaBotones = new JPanel();
@@ -199,15 +205,17 @@ public class Gui extends JFrame {
 		botonComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (listaPuntos.size() > 0 && adaboost == null) {
-					try{
+					try {
 						MAXITERACIONES = Integer.parseInt(tx_iter.getText());
-					}catch(NumberFormatException exc){
+					} catch (NumberFormatException exc) {
 						MAXITERACIONES = 100;
+						tx_iter.setText(""+MAXITERACIONES);
 					}
 					try {
 						MAXLINEAS = Integer.parseInt(tx_lineas.getText());
 					} catch (NumberFormatException e1) {
 						MAXLINEAS = 1000;
+						tx_lineas.setText(""+MAXLINEAS);
 					}
 					listaLineas.clear();
 					listaDebiles.clear();
@@ -215,8 +223,10 @@ public class Gui extends JFrame {
 					adaboost = new Adaboost(interfaz, listaPuntos,
 							MAXITERACIONES, MAXLINEAS, ANCHO, ALTO);
 					adaboost.aplicarAdaboost(); // TODO: hacer algo aquí.
+					fondoCanvas = null;
 					repintarCanvas();
 					adaboost = null;
+
 				}
 			}
 		});
@@ -230,6 +240,7 @@ public class Gui extends JFrame {
 				listaLineas.clear();
 				listaDebiles.clear();
 				clasificadorFinal.clear();
+				fondoCanvas = null;
 				areaPuntos.repaint();
 			}
 		});
@@ -241,6 +252,16 @@ public class Gui extends JFrame {
 				.getMaximumWindowBounds().height;
 		this.setSize(ANCHO, ALTO);
 		this.setExtendedState(MAXIMIZED_BOTH);
+		
+		d_mensaje = new Dialog(this);
+		d_mensaje.setLayout(new BorderLayout());
+		d_mensaje.setTitle("Dibujando");
+		d_mensaje.add(new Label("Dibujando el fondo, un momento",Label.CENTER));
+		d_mensaje.getComponent(0).setBounds(d_mensaje.getWidth()/3, d_mensaje.getHeight()/3, d_mensaje.getWidth()/3, d_mensaje.getHeight()/3);
+		d_mensaje.setResizable(false);
+		d_mensaje.setSize(ANCHO/3, ALTO/3);
+		d_mensaje.setLocation(ANCHO/3, ALTO/3);
+		
 	}
 
 	public void repintarCanvas() {
@@ -262,23 +283,35 @@ public class Gui extends JFrame {
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
 			if (cb_fondo.getState()) {
-				Color fondoRojo = new Color(255, 100, 100, 200);
-				Color fondoAzul = new Color(100, 100, 255, 200);
-				for (int i = 0; i < this.getWidth(); i++) {
-					for (int j = 0; j < this.getHeight(); j++) {
-						double clase = clasificadorFinal.clasificar(new Punto(
-								i, j, 0));
-						if (clase > 0) {
-							g.setColor(fondoAzul);
-						} else {
 
-							g.setColor(fondoRojo);
+				if (fondoCanvas == null) {
+					d_mensaje.setVisible(true);
+					fondoCanvas = new BufferedImage(this.getWidth(),
+							this.getHeight(), BufferedImage.TYPE_INT_ARGB);
+					Graphics2D g2 = fondoCanvas.createGraphics();
+					Color fondoRojo = new Color(255, 100, 100, 200);
+					Color fondoAzul = new Color(100, 100, 255, 200);
+					for (int i = 0; i < this.getWidth(); i++) {
+						for (int j = 0; j < this.getHeight(); j++) {
+							double clase = clasificadorFinal
+									.clasificar(new Punto(i, j, 0));
+							if (clase > 0) {
+								g2.setColor(fondoAzul);
+							} else {
+
+								g2.setColor(fondoRojo);
+							}
+
+							g2.drawLine(i, j, i, j);
 						}
-
-						g.drawLine(i, j, i, j);
-
 					}
+					g.drawImage(fondoCanvas, 0, 0, this.getWidth(),
+							this.getHeight(), null);
+				} else {
+					g.drawImage(fondoCanvas, 0, 0, this.getWidth(),
+							this.getHeight(), null);
 				}
+				d_mensaje.setVisible(false);
 			}
 
 			if (cb_intermedias.getState()) {
@@ -314,9 +347,9 @@ public class Gui extends JFrame {
 									.getDestino().getY());
 					g.setColor(Color.BLUE);
 					g.drawLine((int) lineaAzul.getOrigen().getX(),
-							(int) lineaAzul.getOrigen().getY(),
-							(int) lineaAzul.getDestino().getX(),
-							(int) lineaAzul.getDestino().getY());
+							(int) lineaAzul.getOrigen().getY(), (int) lineaAzul
+									.getDestino().getX(), (int) lineaAzul
+									.getDestino().getY());
 				}
 			}
 
@@ -335,14 +368,14 @@ public class Gui extends JFrame {
 							.getX(), (int) linea.getDestino().getY());
 					g.setColor(Color.RED);
 					g.drawLine((int) lineaRoja.getOrigen().getX(),
-							(int) lineaRoja.getOrigen().getY(),
-							(int) lineaRoja.getDestino().getX(),
-							(int) lineaRoja.getDestino().getY());
+							(int) lineaRoja.getOrigen().getY(), (int) lineaRoja
+									.getDestino().getX(), (int) lineaRoja
+									.getDestino().getY());
 					g.setColor(Color.BLUE);
 					g.drawLine((int) lineaAzul.getOrigen().getX(),
-							(int) lineaAzul.getOrigen().getY(),
-							(int) lineaAzul.getDestino().getX(),
-							(int) lineaAzul.getDestino().getY());
+							(int) lineaAzul.getOrigen().getY(), (int) lineaAzul
+									.getDestino().getX(), (int) lineaAzul
+									.getDestino().getY());
 				}
 			}
 
