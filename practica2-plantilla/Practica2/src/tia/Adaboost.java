@@ -52,7 +52,9 @@ public class Adaboost {
 		System.out.println("Empezando el algoritmo AdaBoost");
 		System.out.println();
 		// empieza el bucle principal -- t = 1,...,T
-		for (int i = 0; i < maxIteraciones; i++) {
+		int i;
+		for (i = 0; i < maxIteraciones; i++) {
+			System.out.println("== Iteración " + i + " ==");
 			clasificadorDebil clasificador = obtenerClasificador();
 			
 			if(((Double)clasificador.getAlpha()).isInfinite())
@@ -69,6 +71,7 @@ public class Adaboost {
 				System.out.println("Encontrado el clasificador final perfecto");
 				break;
 			}
+			System.out.println("El epsilon del clasificador fuerte acumulado es " + clasFinal.getEpsilon());
 			
 			ArrayList<Double> pesosSinNormalizar = new ArrayList<Double>();
 			double normalizacion = 0;
