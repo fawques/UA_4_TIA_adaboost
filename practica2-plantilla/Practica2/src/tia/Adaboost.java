@@ -46,14 +46,18 @@ public class Adaboost {
 		rand = new Random(now.getTime());
 	}
 
-	public void aplicarAdaboost() { // TODO: void por ahora
+	public void aplicarAdaboost() {
+		System.out.println();
+		System.out.println("=======================================");
+		System.out.println("Empezando el algoritmo AdaBoost");
+		System.out.println();
 		// empieza el bucle principal -- t = 1,...,T
 		for (int i = 0; i < maxIteraciones; i++) {
 			clasificadorDebil clasificador = obtenerClasificador();
 			
 			if(((Double)clasificador.getAlpha()).isInfinite())
 			{
-				System.out.println("Alpha infinito, desechamos los demás y nos quedamos con este");
+				System.out.println("Hemos llegado a un clasificador débil con alpha infinito, desechamos los demás y nos quedamos con este");
 				clasFinal.clear();
 			}
 			
@@ -84,14 +88,12 @@ public class Adaboost {
 			for (int j = 0; j < pesos.size(); j++) {
 				pesos.set(j, pesosSinNormalizar.get(j)/normalizacion);
 			}
-			
-			System.out.println("He terminado una iteración");
-			System.out.println("El factor de confianza es alpha = " + clasificador.getAlpha());
-			System.out.println("Y su epsilon = " + clasificador.getEpsilon());
-			System.out.println("El epsilon actual del clasificador fuerte es " + clasFinal.getEpsilon());
-			
-			
 		}
+		interfaz.clasificadorFinal = clasFinal;
+		if (i == maxIteraciones){
+			System.out.println("No se ha encontrado un clasificador perfecto, el mejor encontrado tiene epsilon= " + clasFinal.getEpsilon());
+		}
+		
 	}
 
 	/**
