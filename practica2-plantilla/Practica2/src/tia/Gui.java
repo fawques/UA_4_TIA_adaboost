@@ -302,21 +302,21 @@ public class Gui extends JFrame {
 
 			if (cb_debiles.getState()) {
 				for (Linea linea : listaDebiles) {
-					Linea lineaAux = new Linea(linea.getRho() - 1,
+					Linea lineaRoja = new Linea(linea.getRho() - 1,
 							linea.getThetha(), ANCHO, ALTO);
-					Linea lineaExtra = new Linea(linea.getRho() + 1,
+					Linea lineaAzul = new Linea(linea.getRho() + 1,
 							linea.getThetha(), ANCHO, ALTO);
 
 					g.setColor(Color.RED);
-					g.drawLine((int) lineaAux.getOrigen().getX(),
-							(int) lineaAux.getOrigen().getY(), (int) lineaAux
-									.getDestino().getX(), (int) lineaAux
+					g.drawLine((int) lineaRoja.getOrigen().getX(),
+							(int) lineaRoja.getOrigen().getY(), (int) lineaRoja
+									.getDestino().getX(), (int) lineaRoja
 									.getDestino().getY());
 					g.setColor(Color.BLUE);
-					g.drawLine((int) lineaExtra.getOrigen().getX(),
-							(int) lineaExtra.getOrigen().getY(),
-							(int) lineaExtra.getDestino().getX(),
-							(int) lineaExtra.getDestino().getY());
+					g.drawLine((int) lineaAzul.getOrigen().getX(),
+							(int) lineaAzul.getOrigen().getY(),
+							(int) lineaAzul.getDestino().getX(),
+							(int) lineaAzul.getDestino().getY());
 				}
 			}
 
@@ -324,9 +324,9 @@ public class Gui extends JFrame {
 				for (clasificadorDebil clasDebil : clasificadorFinal
 						.getClasificadores()) {
 					Linea linea = clasDebil.getLinea();
-					Linea lineaExtra = new Linea(linea.getRho() + 2,
+					Linea lineaAzul = new Linea(linea.getRho() + 2,
 							linea.getThetha(), ANCHO, ALTO);
-					Linea lineaExtra2 = new Linea(linea.getRho() - 2,
+					Linea lineaRoja = new Linea(linea.getRho() - 2,
 							linea.getThetha(), ANCHO, ALTO);
 
 					g.setColor(Color.BLACK);
@@ -334,15 +334,15 @@ public class Gui extends JFrame {
 							.getOrigen().getY(), (int) linea.getDestino()
 							.getX(), (int) linea.getDestino().getY());
 					g.setColor(Color.RED);
-					g.drawLine((int) lineaExtra2.getOrigen().getX(),
-							(int) lineaExtra2.getOrigen().getY(),
-							(int) lineaExtra2.getDestino().getX(),
-							(int) lineaExtra2.getDestino().getY());
+					g.drawLine((int) lineaRoja.getOrigen().getX(),
+							(int) lineaRoja.getOrigen().getY(),
+							(int) lineaRoja.getDestino().getX(),
+							(int) lineaRoja.getDestino().getY());
 					g.setColor(Color.BLUE);
-					g.drawLine((int) lineaExtra.getOrigen().getX(),
-							(int) lineaExtra.getOrigen().getY(),
-							(int) lineaExtra.getDestino().getX(),
-							(int) lineaExtra.getDestino().getY());
+					g.drawLine((int) lineaAzul.getOrigen().getX(),
+							(int) lineaAzul.getOrigen().getY(),
+							(int) lineaAzul.getDestino().getX(),
+							(int) lineaAzul.getDestino().getY());
 				}
 			}
 
