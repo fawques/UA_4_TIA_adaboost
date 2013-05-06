@@ -67,6 +67,9 @@ public class Adaboost {
 			clasFinal.clasificar(puntos, pesos);
 			interfaz.clasificadorFinal = clasFinal;
 			
+			System.out.println("El factor de confianza es alpha = " + clasificador.getAlpha());
+			System.out.println("Y su epsilon = " + clasificador.getEpsilon());
+			
 			if(clasFinal.getEpsilon() == 0.0){
 				System.out.println("Encontrado el clasificador final perfecto");
 				break;
