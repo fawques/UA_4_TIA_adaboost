@@ -15,6 +15,7 @@ import sun.awt.SunToolkit.InfiniteLoop;
 public class Adaboost {
 	private List<Punto> puntos;
 	private List<Double> pesos;
+	private List<Double> pesosSinNormalizar;
 	//private List<Linea> clasificadoresDebiles;
 	private clasificadorFuerte clasIteracion;
 	private clasificadorFuerte clasFinal;
@@ -85,24 +86,7 @@ public class Adaboost {
 			
 			System.out.println("El epsilon del clasificador fuerte acumulado es " + clasIteracion.getEpsilon());
 			
-			ArrayList<Double> pesosSinNormalizar = new ArrayList<Double>();
-			double normalizacion = 0;
-			
-			for (int j = 0; j < puntos.size(); j++) {
-				Punto punto = puntos.get(j);
-				double nuevoPeso;
-				if(clasificador.clasificar(punto)){
-					 nuevoPeso = pesos.get(j) * Math.pow(Math.E, -1 * clasificador.getAlpha());
-				}else{
-					nuevoPeso = pesos.get(j) * Math.pow(Math.E, clasificador.getAlpha());
-				}
-				pesosSinNormalizar.add(nuevoPeso);
-				normalizacion += nuevoPeso;
-			}
-			
-			for (int j = 0; j < pesos.size(); j++) {
-				pesos.set(j, pesosSinNormalizar.get(j)/normalizacion);
-			}
+			actualizarPesos(clasificador);
 		}
 		interfaz.clasificadorFinal = clasFinal;
 		if (i == maxIteraciones){
@@ -110,6 +94,31 @@ public class Adaboost {
 		}
 		System.out.println("Número de clasificadores = " + clasFinal.getClasificadores().size());
 		
+	}
+
+	/**
+	 * @param clasificador
+	 * @return
+	 */
+	public void actualizarPesos(clasificadorDebil clasificador) {
+		pesosSinNormalizar = new ArrayList<Double>();
+		double normalizacion = 0;
+		
+		for (int j = 0; j < puntos.size(); j++) {
+			Punto punto = puntos.get(j);
+			double nuevoPeso;
+			if(clasificador.clasificar(punto)){
+				 nuevoPeso = pesos.get(j) * Math.pow(Math.E, -1 * clasificador.getAlpha());
+			}else{
+				nuevoPeso = pesos.get(j) * Math.pow(Math.E, clasificador.getAlpha());
+			}
+			pesosSinNormalizar.add(nuevoPeso);
+			normalizacion += nuevoPeso;
+		}
+		
+		for (int j = 0; j < pesos.size(); j++) {
+			pesos.set(j, pesosSinNormalizar.get(j)/normalizacion);
+		}
 	}
 
 	/**
