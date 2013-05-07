@@ -17,6 +17,7 @@ public class Adaboost {
 	private List<Double> pesos;
 	//private List<Linea> clasificadoresDebiles;
 	private clasificadorFuerte clasFinal;
+	private clasificadorFuerte clasIter;
 
 	private int maxIteraciones;
 	private int maxLineas;
@@ -44,6 +45,8 @@ public class Adaboost {
 		interfaz = _interfaz;
 		Date now = new Date();
 		rand = new Random(now.getTime());
+		clasIter = new clasificadorFuerte();
+		clasIter.setEpsilon(99999);
 	}
 
 	public void aplicarAdaboost() {
@@ -65,15 +68,21 @@ public class Adaboost {
 			
 			clasFinal.add(clasificador);
 			clasFinal.clasificar(puntos, pesos);
-			interfaz.clasificadorFinal = clasFinal;
 			
 			System.out.println("El factor de confianza es alpha = " + clasificador.getAlpha());
 			System.out.println("Y su epsilon = " + clasificador.getEpsilon());
+			
+			if(clasIter.getEpsilon() > clasFinal.getEpsilon()){
+				clasIter = new clasificadorFuerte(clasFinal);
+			}
 			
 			if(clasFinal.getEpsilon() == 0.0){
 				System.out.println("Encontrado el clasificador final perfecto");
 				break;
 			}
+			
+			
+			
 			System.out.println("El epsilon del clasificador fuerte acumulado es " + clasFinal.getEpsilon());
 			
 			ArrayList<Double> pesosSinNormalizar = new ArrayList<Double>();
@@ -95,9 +104,9 @@ public class Adaboost {
 				pesos.set(j, pesosSinNormalizar.get(j)/normalizacion);
 			}
 		}
-		interfaz.clasificadorFinal = clasFinal;
+		interfaz.clasificadorFinal = clasIter;
 		if (i == maxIteraciones){
-			System.out.println("No se ha encontrado un clasificador perfecto, el mejor encontrado tiene epsilon= " + clasFinal.getEpsilon());
+			System.out.println("No se ha encontrado un clasificador perfecto, el mejor encontrado tiene epsilon= " + clasIter.getEpsilon());
 		}
 		
 	}
