@@ -16,8 +16,8 @@ public class Adaboost {
 	private List<Punto> puntos;
 	private List<Double> pesos;
 	//private List<Linea> clasificadoresDebiles;
+	private clasificadorFuerte clasIteracion;
 	private clasificadorFuerte clasFinal;
-	private clasificadorFuerte clasIter;
 
 	private int maxIteraciones;
 	private int maxLineas;
@@ -37,7 +37,7 @@ public class Adaboost {
 		maxLineas = _maxLineas;
 
 		//clasificadoresDebiles = new ArrayList<Linea>();
-		clasFinal = new clasificadorFuerte(); //TODO: crear cuando
+		clasIteracion = new clasificadorFuerte(); //TODO: crear cuando
 		// esté seguro de que es así
 
 		anchoCanvas = _ancho;
@@ -45,8 +45,8 @@ public class Adaboost {
 		interfaz = _interfaz;
 		Date now = new Date();
 		rand = new Random(now.getTime());
-		clasIter = new clasificadorFuerte();
-		clasIter.setEpsilon(99999);
+		clasFinal = new clasificadorFuerte();
+		clasFinal.setEpsilon(99999);
 	}
 
 	public void aplicarAdaboost() {
@@ -63,27 +63,27 @@ public class Adaboost {
 			if(((Double)clasificador.getAlpha()).isInfinite())
 			{
 				System.out.println("Hemos llegado a un clasificador débil con alpha infinito, desechamos los demás y nos quedamos con este");
-				clasFinal.clear();
+				clasIteracion.clear();
 			}
 			
-			clasFinal.add(clasificador);
-			clasFinal.clasificar(puntos, pesos);
+			clasIteracion.add(clasificador);
+			clasIteracion.clasificar(puntos, pesos);
 			
 			System.out.println("El factor de confianza es alpha = " + clasificador.getAlpha());
 			System.out.println("Y su epsilon = " + clasificador.getEpsilon());
 			
-			if(clasIter.getEpsilon() > clasFinal.getEpsilon()){
-				clasIter = new clasificadorFuerte(clasFinal);
+			if(clasFinal.getEpsilon() > clasIteracion.getEpsilon()){
+				clasFinal = new clasificadorFuerte(clasIteracion);
 			}
 			
-			if(clasFinal.getEpsilon() == 0.0){
+			if(clasIteracion.getEpsilon() == 0.0){
 				System.out.println("Encontrado el clasificador final perfecto");
 				break;
 			}
 			
 			
 			
-			System.out.println("El epsilon del clasificador fuerte acumulado es " + clasFinal.getEpsilon());
+			System.out.println("El epsilon del clasificador fuerte acumulado es " + clasIteracion.getEpsilon());
 			
 			ArrayList<Double> pesosSinNormalizar = new ArrayList<Double>();
 			double normalizacion = 0;
@@ -104,9 +104,9 @@ public class Adaboost {
 				pesos.set(j, pesosSinNormalizar.get(j)/normalizacion);
 			}
 		}
-		interfaz.clasificadorFinal = clasIter;
+		interfaz.clasificadorFinal = clasFinal;
 		if (i == maxIteraciones){
-			System.out.println("No se ha encontrado un clasificador perfecto, el mejor encontrado tiene epsilon= " + clasIter.getEpsilon());
+			System.out.println("No se ha encontrado un clasificador perfecto, el mejor encontrado tiene epsilon= " + clasFinal.getEpsilon());
 		}
 		
 	}
