@@ -21,9 +21,6 @@ public class clasificadorFuerte {
 	
 	public clasificadorFuerte(clasificadorFuerte _clas) {
 		clasificadores = new ArrayList<clasificadorDebil>(_clas.clasificadores);
-		for (int i = 0; i < _clas.clasificadores.size(); i++) {
-			clasificadores.add(_clas.clasificadores.get(i));
-		}
 		setEpsilon(_clas.getEpsilon());
 		setAlpha(_clas.getAlpha());
 	}

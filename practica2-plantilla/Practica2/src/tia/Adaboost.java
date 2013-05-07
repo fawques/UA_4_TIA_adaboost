@@ -108,6 +108,7 @@ public class Adaboost {
 		if (i == maxIteraciones){
 			System.out.println("No se ha encontrado un clasificador perfecto, el mejor encontrado tiene epsilon= " + clasFinal.getEpsilon());
 		}
+		System.out.println("Número de clasificadores = " + clasFinal.getClasificadores().size());
 		
 	}
 
