@@ -134,6 +134,9 @@ public class Gui extends JFrame {
 				fd.setVisible(true);
 				String filename = fd.getDirectory() + fd.getFile();
 				listaPuntos.clear();
+				listaLineas.clear();
+				listaDebiles.clear();
+				clasificadorFinal.clear();
 
 				try {
 					BufferedReader br = new BufferedReader(new FileReader(

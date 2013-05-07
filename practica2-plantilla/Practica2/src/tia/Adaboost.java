@@ -98,7 +98,6 @@ public class Adaboost {
 
 	/**
 	 * @param clasificador
-	 * @return
 	 */
 	public void actualizarPesos(clasificadorDebil clasificador) {
 		pesosSinNormalizar = new ArrayList<Double>();
