@@ -167,6 +167,9 @@ public class Gui extends JFrame {
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+				} catch (Exception e1) {
+					// TODO: handle exception
+					e1.printStackTrace();
 				}
 
 				areaPuntos.repaint();
@@ -225,7 +228,7 @@ public class Gui extends JFrame {
 					clasificadorFinal.clear();
 					adaboost = new Adaboost(interfaz, listaPuntos,
 							MAXITERACIONES, MAXLINEAS, ANCHO, ALTO);
-					adaboost.aplicarAdaboost(); // TODO: hacer algo aquí.
+					adaboost.aplicarAdaboost();
 					fondoCanvas = null;
 					repintarCanvas();
 					adaboost = null;
@@ -239,6 +242,7 @@ public class Gui extends JFrame {
 		JButton botonLimpiar = new JButton("Limpiar");
 		botonLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				cb_fondo.setState(false);
 				listaPuntos.clear();
 				listaLineas.clear();
 				listaDebiles.clear();

@@ -27,7 +27,6 @@ public class Linea {
 		
 		// Calculamos los puntos extremo de la recta, de forma que vaya de lado a lado del canvas
 		int x = 0;
-		// para el cálculo usamos la forma paramétrica en coordenadas polares
 		int y = (int) Math.round((rho/Math.sin(thetha)));
 		if(y < 0 || y >= alto){
 			y = 0;
@@ -71,6 +70,4 @@ public class Linea {
 	public Point getDestino(){
 		return destino;
 	}
-	// TODO: clasificar cada lado de un tipo
-	
 }
