@@ -1,6 +1,9 @@
 package tia;
 import static java.lang.Math.signum;
 
+/**
+ * punto para adaboost. Guarda una posición (X,Y) y un tipo de punto
+ */
 public class Punto {
 
 	private double x;

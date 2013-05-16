@@ -6,25 +6,37 @@ package tia;
 import java.awt.Point;
 
 /**
- * @author Víctor
- *
+ * Línea para adaboost. Se define con un rho y un thetha, según la fórmula
+ * rho = x * cos(thetha) + y * sen(thetha)
  */
 public class Linea {
-	//distancia al origen
+	/**
+	 * distancia al origen
+	 */
 	private double rho;
-	// angulo de la recta
+	/**
+	 *  angulo de la recta
+	 */
 	private double thetha;
 	
+	/**
+	 * punto que corta con uno de los límites del canvas
+	 */
 	private Point origen;
+	/**
+	 * punto que corta con otro límite del canvas
+	 */
 	private Point destino;
 	
+	/** Constructor de línea. Calcula los puntos de corte con los límites del canvas
+	 * @param _rho rho de la línea
+	 * @param _thetha thetha de la línea
+	 * @param ancho ancho del canvas
+	 * @param alto alto del canvas
+	 */
 	public Linea(double _rho, double _thetha, int ancho, int alto){
 		rho = _rho;
-		
 		thetha = _thetha;
-		
-		
-		
 		// Calculamos los puntos extremo de la recta, de forma que vaya de lado a lado del canvas
 		int x = 0;
 		int y = (int) Math.round((rho/Math.sin(thetha)));

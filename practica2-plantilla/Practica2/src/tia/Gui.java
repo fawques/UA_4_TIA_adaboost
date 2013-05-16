@@ -31,23 +31,58 @@ import javax.swing.JPanel;
 
 public class Gui extends JFrame {
 
+	/**
+	 * Número máximo de iteraciones para el algoritmo
+	 */
 	private static int MAXITERACIONES = 100;
+	/**
+	 * Número máximo de líneas a generar
+	 */
 	private static int MAXLINEAS = 30;
+	/**
+	 * ancho del área de dibujo. Después se modificará al máximo de la pantalla del usuario
+	 */
 	private static int ANCHO = 400;
+	/**
+	 * alto del área de dibujo. Después se modificará al máximo de la pantalla del usuario
+	 */
 	private static int ALTO = 400;
 
+	/**
+	 * radio del punto a dibujar
+	 */
 	private final static int RADIO_PUNTO = 2;
 
 	private static final long serialVersionUID = 737365829727001543L;
 
+	/**
+	 * lista de puntos sobre la que aplicar el algoritmo
+	 */
 	private List<Punto> listaPuntos;
+	/**
+	 * lista de líneas intermedias (líneas generadas para cada clasificador débil)
+	 */
 	public List<Linea> listaLineas;
+	/**
+	 * lista de líneas correspondientes a los clasificadores débiles encontrados
+	 */
 	public List<Linea> listaDebiles;
-	// public List<clasificadorDebil> listaFinal;
+	/**
+	 * clasificador fuerte encontrado
+	 */
 	public clasificadorFuerte clasificadorFinal;
+	/**
+	 * zona de pintado
+	 */
 	private Canvas areaPuntos;
+	/**
+	 * 
+	 */
 	private Adaboost adaboost;
 
+	/**
+	 * Elementos de interfaz 
+	 */
 	private Checkbox cb_intermedias;
 	private Checkbox cb_debiles;
 	private Checkbox cb_fuerte;
@@ -57,24 +92,33 @@ public class Gui extends JFrame {
 	private TextField tx_iter;
 	private Dialog d_mensaje;
 
+	
+	/**
+	 * Imagen que almacena el último fondo pintado, para no tener que repintar
+	 */
 	private BufferedImage fondoCanvas;
 
+	/**
+	 * Auxiliar. Almacenará el this al crear la interfaz
+	 */
 	private Gui interfaz;
 
+	/**
+	 * Constructor de Gui. Inicializa los valores y asigna el tamaño
+	 */
 	public Gui() {
 		super("AdaBoost");
 		interfaz = this;
 		listaPuntos = new ArrayList<Punto>();
 		listaLineas = new ArrayList<Linea>();
 		listaDebiles = new ArrayList<Linea>();
-		// listaFinal = new ArrayList<clasificadorDebil>();
 		clasificadorFinal = new clasificadorFuerte();
 		adaboost = null;
 
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Area de inputs
+		// Barra superior
 		JPanel barraSuperior = new JPanel();
 		barraSuperior.setLayout(new FlowLayout());
 		tx_iter = new TextField("100", 4);
@@ -211,6 +255,7 @@ public class Gui extends JFrame {
 		botonComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (listaPuntos.size() > 0 && adaboost == null) {
+					// comprobamos las entradas
 					try {
 						MAXITERACIONES = Integer.parseInt(tx_iter.getText());
 					} catch (NumberFormatException exc) {
@@ -223,9 +268,11 @@ public class Gui extends JFrame {
 						MAXLINEAS = 1000;
 						tx_lineas.setText(""+MAXLINEAS);
 					}
+					// limpiamos la ejecución anterior
 					listaLineas.clear();
 					listaDebiles.clear();
 					clasificadorFinal.clear();
+					
 					adaboost = new Adaboost(interfaz, listaPuntos,
 							MAXITERACIONES, MAXLINEAS, ANCHO, ALTO);
 					adaboost.aplicarAdaboost();
@@ -238,7 +285,7 @@ public class Gui extends JFrame {
 		});
 		areaBotones.add(botonComenzar);
 
-		// Boton para borrar todos los puntos
+		// Boton para borrar todos los puntos y la ejecución anterior
 		JButton botonLimpiar = new JButton("Limpiar");
 		botonLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -252,6 +299,8 @@ public class Gui extends JFrame {
 			}
 		});
 		areaBotones.add(botonLimpiar);
+		
+		// Inicializamos el tamaño al máximo visible en la pantalla
 		this.setMinimumSize(new Dimension(400, 400));
 		ANCHO = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
 				.getMaximumWindowBounds().width;
@@ -260,6 +309,7 @@ public class Gui extends JFrame {
 		this.setSize(ANCHO, ALTO);
 		this.setExtendedState(MAXIMIZED_BOTH);
 		
+		// creamos el mensaje de dibujando el fondo
 		d_mensaje = new Dialog(this);
 		d_mensaje.setLayout(new BorderLayout());
 		d_mensaje.setTitle("Dibujando");
@@ -271,15 +321,24 @@ public class Gui extends JFrame {
 		
 	}
 
+	/**
+	 * refrescar el canvas
+	 */
 	public void repintarCanvas() {
 		areaPuntos.repaint();
 	}
 
+	/**Main
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Gui gui = new Gui();
 		gui.setVisible(true);
 	}
 
+	/**
+	 * Zona de dibujo
+	 */
 	class Canvas extends JPanel {
 		private static final long serialVersionUID = -4449288527123357984L;
 
@@ -289,10 +348,13 @@ public class Gui extends JFrame {
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+			// pintar fondo seleccionado
 			if (cb_fondo.getState()) {
 
+				// si ha habido cambios en la clasificación
 				if (fondoCanvas == null) {
 					d_mensaje.setVisible(true);
+					// pintamos sobre la imagen de buffer
 					fondoCanvas = new BufferedImage(this.getWidth(),
 							this.getHeight(), BufferedImage.TYPE_INT_ARGB);
 					Graphics2D g2 = fondoCanvas.createGraphics();
@@ -308,19 +370,22 @@ public class Gui extends JFrame {
 
 								g2.setColor(fondoRojo);
 							}
-
+							// esto es muy sucio >_<
 							g2.drawLine(i, j, i, j);
 						}
 					}
+					// volcamos la imagen en el canvas
 					g.drawImage(fondoCanvas, 0, 0, this.getWidth(),
 							this.getHeight(), null);
 				} else {
+					// volcamos la imagen de la última ejecución en el canvas
 					g.drawImage(fondoCanvas, 0, 0, this.getWidth(),
 							this.getHeight(), null);
 				}
 				d_mensaje.setVisible(false);
 			}
 
+			// mostrar líneas intermedias
 			if (cb_intermedias.getState()) {
 				g.setColor(Color.GREEN);
 				for (Linea linea : listaLineas) {
@@ -329,7 +394,8 @@ public class Gui extends JFrame {
 							.getX(), (int) linea.getDestino().getY());
 				}
 			}
-			// Dibuja los puntos
+			
+			// Dibujamos los puntos
 			for (Punto p : listaPuntos) {
 				if (p.getTipo() > 0) {
 					g.setColor(Color.BLUE);
@@ -340,6 +406,7 @@ public class Gui extends JFrame {
 						- RADIO_PUNTO, RADIO_PUNTO * 2 + 1, RADIO_PUNTO * 2 + 1);
 			}
 
+			// mostrar clasificadores débiles
 			if (cb_debiles.getState()) {
 				for (Linea linea : listaDebiles) {
 					Linea lineaRoja = new Linea(linea.getRho() - 1,
@@ -360,6 +427,7 @@ public class Gui extends JFrame {
 				}
 			}
 
+			// mostrar clasificador fuerte
 			if (cb_fuerte.getState()) {
 				for (clasificadorDebil clasDebil : clasificadorFinal
 						.getClasificadores()) {
@@ -369,15 +437,18 @@ public class Gui extends JFrame {
 					Linea lineaRoja = new Linea(linea.getRho() - 2,
 							linea.getThetha(), ANCHO, ALTO);
 
+					// línea central
 					g.setColor(Color.BLACK);
 					g.drawLine((int) linea.getOrigen().getX(), (int) linea
 							.getOrigen().getY(), (int) linea.getDestino()
 							.getX(), (int) linea.getDestino().getY());
+					// línea del lado rojo
 					g.setColor(Color.RED);
 					g.drawLine((int) lineaRoja.getOrigen().getX(),
 							(int) lineaRoja.getOrigen().getY(), (int) lineaRoja
 									.getDestino().getX(), (int) lineaRoja
 									.getDestino().getY());
+					// línea del lado azul
 					g.setColor(Color.BLUE);
 					g.drawLine((int) lineaAzul.getOrigen().getX(),
 							(int) lineaAzul.getOrigen().getY(), (int) lineaAzul
